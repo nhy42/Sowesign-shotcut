@@ -1,6 +1,9 @@
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.action_chains import ActionChains
+
 from time import sleep
 from os import listdir
 
@@ -15,6 +18,26 @@ def typePinCode(driver, pin):
             if keyElement.text == e:
                 keyElement.click()
         sleep(0.1)
+
+
+def typeClassCode(driver, code):
+    keyArray = [Keys.NUMPAD0,
+                Keys.NUMPAD1,
+                Keys.NUMPAD2,
+                Keys.NUMPAD3,
+                Keys.NUMPAD4,
+                Keys.NUMPAD5,
+                Keys.NUMPAD6,
+                Keys.NUMPAD7,
+                Keys.NUMPAD8,
+                Keys.NUMPAD9]
+    for num in code:
+        ActionChains(driver).send_keys(keyArray[int(num)]).perform()
+        sleep(0.1)
+
+
+def drawSig(sigFile):
+    pass
 
 
 def getCreds():
@@ -32,8 +55,7 @@ def getCreds():
 
 def main():
     SCHOOLCODE, PERSONALCODE, PINCODE, SIGNATUREFILE = getCreds()
-
-    # UNIQUECODE = input("Entre le code de la séance :\n> ")
+    UNIQUECODE = input("Entre le code de la séance :\n> ")
     s = Service("chromedriver.exe")
     print("Launching driver")
     driver = webdriver.Chrome(service=s)
@@ -48,6 +70,10 @@ def main():
     typePinCode(driver, PINCODE)
     driver.find_element(By.CLASS_NAME, "button").click()
     sleep(7)
+    typeClassCode(driver, UNIQUECODE)
+    sleep(5)
+    drawSig(SIGNATUREFILE)
+    # click on da button
 
 
 if __name__ == '__main__':
