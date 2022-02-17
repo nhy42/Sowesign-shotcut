@@ -36,8 +36,26 @@ def typeClassCode(driver, code):
         sleep(0.1)
 
 
-def drawSig(sigFile):
-    pass
+def drawSig(driver, sigFile):
+    lastWasZero = True
+    lastX, lastY = 0, 0
+    sigPad = driver.find_element(By.TAG_NAME, "canvas")
+    actionToDo = ActionChains(driver).move_to_element(sigPad)
+    with open(path + "sig\\" + sigFile, 'r') as f:
+        lines = f.readlines()
+    for line in lines:
+        line = line.strip()
+        if line == "0":
+            actionToDo.release()
+            lastWasZero = True
+        else:
+            actualX, actualY = [int(e) for e in line.split(",")]
+            if lastWasZero:
+                actionToDo.click_and_hold()
+                lastWasZero = False
+            actionToDo.move_by_offset(actualX-lastX-350, actualY-lastY-185)
+            lastX, lastY = actualX, actualY
+    actionToDo.perform()
 
 
 def getCreds():
@@ -71,8 +89,9 @@ def main():
     driver.find_element(By.CLASS_NAME, "button").click()
     sleep(7)
     typeClassCode(driver, UNIQUECODE)
-    sleep(5)
-    drawSig(SIGNATUREFILE)
+    # driver.get("file:///D:/Sowesign-shotcut/signatureMarker/signMaker.html")  # test
+    # sleep(5)
+    drawSig(driver, SIGNATUREFILE)
     # click on da button
 
 
