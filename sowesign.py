@@ -3,6 +3,7 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.chrome.options import Options
 
 from time import sleep
 from os import listdir
@@ -79,7 +80,10 @@ def main():
     UNIQUECODE = input("Entre le code de la séance :\n> ")
     s = Service("chromedriver.exe")
     print("Launching driver")
-    driver = webdriver.Chrome(service=s)
+    options = Options()
+    # options.add_argument("--headless")
+    # options.add_argument("--window-size=1920,1080")
+    driver = webdriver.Chrome(service=s, options=options)
     driver.minimize_window()
     sleep(1)
     print("Going to app.sowesign.com")
@@ -104,6 +108,10 @@ def main():
     # driver.get("file:///D:/Sowesign-shotcut/signatureMarker/signMaker.html")  # test
     drawSig(driver, SIGNATUREFILE)
     # click on da button
+    driver.find_element(By.CLASS_NAME, "active-button").click()
+    while driver.current_url != "https://app.sowesign.com/student/validated":
+        sleep(2)
+    sleep(1)
 
 
 if __name__ == '__main__':
