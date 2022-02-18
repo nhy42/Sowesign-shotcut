@@ -41,6 +41,7 @@ def drawSig(driver, sigFile):
     lastX, lastY = 0, 0
     sigPad = driver.find_element(By.TAG_NAME, "canvas")
     actionToDo = ActionChains(driver).move_to_element(sigPad)
+
     with open(path + "sig\\" + sigFile, 'r') as f:
         lines = f.readlines()
     for line in lines:
@@ -49,11 +50,13 @@ def drawSig(driver, sigFile):
             actionToDo.release()
             lastWasZero = True
         else:
-            actualX, actualY = [int(e) for e in line.split(",")]
+            actualX, actualY = line.split(",")
+            actualX = int(actualX) - 350
+            actualY = int(actualY) - 175
+            actionToDo.move_by_offset(actualX-lastX, actualY-lastY)
             if lastWasZero:
                 actionToDo.click_and_hold()
                 lastWasZero = False
-            actionToDo.move_by_offset(actualX-lastX-350, actualY-lastY-185)
             lastX, lastY = actualX, actualY
     actionToDo.perform()
 
@@ -77,20 +80,28 @@ def main():
     s = Service("chromedriver.exe")
     print("Launching driver")
     driver = webdriver.Chrome(service=s)
+    driver.minimize_window()
     sleep(1)
     print("Going to app.sowesign.com")
     driver.get("https://app.sowesign.com/")
     sleep(1)
-    print("Typing School Code : ")
+    print("Typing School Code")
     driver.find_element(By.ID, "codeCustomer").send_keys(SCHOOLCODE)
-    print("Typing Personal Code : ")
+    print("Typing Personal Code")
     driver.find_element(By.ID, "codeId").send_keys(PERSONALCODE)
     typePinCode(driver, PINCODE)
     driver.find_element(By.CLASS_NAME, "button").click()
     sleep(7)
+    while driver.current_url != "https://app.sowesign.com/student/detection":
+        sleep(2)
+    sleep(3)
+    print("Typing PinCode")
     typeClassCode(driver, UNIQUECODE)
+    while driver.current_url != "https://app.sowesign.com/student/signature":
+        sleep(2)
+    sleep(3)
+    print("Drawing signature")
     # driver.get("file:///D:/Sowesign-shotcut/signatureMarker/signMaker.html")  # test
-    # sleep(5)
     drawSig(driver, SIGNATUREFILE)
     # click on da button
 
