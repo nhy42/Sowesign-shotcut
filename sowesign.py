@@ -11,6 +11,10 @@ from os import listdir
 
 path = "D:\\Sowesign-shotcut\\"
 
+# -------- CONFIG ---------
+DRAWSIGBOOL = False
+# -------- CONFIG ---------
+
 
 def typePinCode(driver, pin):
     keySet = driver.find_elements(By.CLASS_NAME, "key")
@@ -78,6 +82,11 @@ def getCreds():
 def main():
     SCHOOLCODE, PERSONALCODE, PINCODE, SIGNATUREFILE = getCreds()
     UNIQUECODE = input("Entre le code de la séance :\n> ")
+
+    # -------- CONFIG ---------
+    # DRAWSIGBOOL = True > plus haut
+    # -------- CONFIG ---------
+
     s = Service("chromedriver.exe")
     print("Launching driver")
     options = Options()
@@ -105,10 +114,11 @@ def main():
         sleep(2)
     sleep(3)
     print("Drawing signature")
-    # driver.get("file:///D:/Sowesign-shotcut/signatureMarker/signMaker.html")  # test
-    drawSig(driver, SIGNATUREFILE)
-    # click on da button
-    driver.find_element(By.CLASS_NAME, "active-button").click()
+    driver.maximize_window()
+    if DRAWSIGBOOL:
+	    # driver.get("file:///D:/Sowesign-shotcut/signatureMarker/signMaker.html")  # test
+	    drawSig(driver, SIGNATUREFILE)
+	    driver.find_element(By.CLASS_NAME, "active-button").click()
     while driver.current_url != "https://app.sowesign.com/student/validated":
         sleep(2)
     sleep(1)
