@@ -16,6 +16,12 @@ DRAWSIGBOOL = False
 # -------- CONFIG ---------
 
 
+def soWeLog(code):
+	if int(code) != 0 and len(code) == 5:
+		with open("code.log", "a") as f:
+			f.write(code + "\n")
+
+
 def typePinCode(driver, pin):
     keySet = driver.find_elements(By.CLASS_NAME, "key")
     for e in pin:
@@ -105,6 +111,7 @@ def main():
     typePinCode(driver, PINCODE)
     driver.find_element(By.CLASS_NAME, "button").click()
     sleep(7)
+    soWeLog(UNIQUECODE)
     while driver.current_url != "https://app.sowesign.com/student/detection":
         sleep(2)
     sleep(3)
